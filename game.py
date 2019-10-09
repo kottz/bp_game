@@ -1,9 +1,11 @@
+#import mpv
 import random
 import os
-import vlc
+#import vlc
 import time
-#import relay_lib_seeed as relay
 
+#TODO: FIXA MPV, SÅ ATT DET INTE FRYSER. MÅSTE STÄNGA MPV NÄR VI KÖR. KANSKE LÄGGA IN SOM ARGUMENT TILL 
+#MUSIC VIEW
 class Game:
 
     def __init__(self, p1, p2, p3, p4):
@@ -12,7 +14,9 @@ class Game:
         self.activeLight = 0
         self.winner = None
         self.winnerLight = None
-
+        
+        #Stages defined as intro, game, drink, win (1,2,3,4)
+        self.currentStage = "intro"
 
         self.introMusic = "some filepath"
         self.gameMusic = "some filepath"
@@ -54,7 +58,55 @@ class Game:
 
         return winner
 
+
     def runGame(self):
+        
+        ###Intro
+        self.currentStage = "intro"
+        self.initGame()
+        self.notify()
+        
+        #introLjusShow
+        for i in range(12):
+            self.activeLight = i%4
+            self.notify()
+            time.sleep(0.4)
+        
+        print("reached game!")
+        ###Game
+        self.currentStage = "game"
+       
+       #Light Sequence
+        i = random.randint(10,25)
+        while(i > 0):
+            if(i == 1):
+                self.activeLight = self.playerArray.index(self.winner)
+            else:
+                prev = self.activeLight
+                self.activeLight = self.playerArray.index(random.choice([x for x in self.playerArray if x != self.playerArray[prev] and x != None]))
+            i -= 1
+            self.notify()
+            time.sleep(self.timeGap)
+
+        ###Drink
+        self.currentStage = "drink"
+        self.notify()
+
+        input("Tryck Enter när personen druckit upp!")
+
+        ###Win
+        self.currentStage = "win"
+        self.notify()
+        time.sleep(8)
+        
+        ###End
+        self.currentStage = "end"
+        self.notify()
+        
+
+
+    def runGameOld(self):
+
         print("Vinnaren är: "+self.winner)
         introPlayer = vlc.MediaPlayer(self.introMusic, "--aout=alsa")
         introPlayer.play()
@@ -71,19 +123,19 @@ class Game:
         #input("Väntar på knapptryck")
 
 
-        gamePlayer = vlc.MediaPlayer(self.gameMusic)
+        gamePlayer = vlc.MediaPlayer(self.gameMusic, "--aout=alsa")
         introPlayer.stop()
         gamePlayer.play()
         self.runLightSequence(self.timeGap)
         #input("väntar igen")
 
-        drinkPlayer = vlc.MediaPlayer(self.drinkMusic)
+        drinkPlayer = vlc.MediaPlayer(self.drinkMusic, "--aout=alsa")
         gamePlayer.stop()
         drinkPlayer.play()
 
         input("slut, väntar på input för att köra win")
 
-        winPlayer = vlc.MediaPlayer(self.winMusic)
+        winPlayer = vlc.MediaPlayer(self.winMusic, "--aout=alsa")
         drinkPlayer.stop()
         winPlayer.play()
         
@@ -118,3 +170,46 @@ class Game:
 class TextView:
     def update(self, subject):
         print("(tv) Active light: "+str(subject.activeLight))
+
+
+class MusicView:
+    initialized = False
+    prevStage = ""
+    
+    def __init__(self, player):
+        self.player = player
+
+    def update(self, subject):
+       
+        if(not self.initialized):
+            introMusic = os.path.join("music","newGame.wav")
+            if(subject.heartBeat):
+                gameMusic = os.path.join("music", "heartbeat.opus")
+            else:
+                gameMusic = os.path.join("music","gameMusicLevel1.opus")
+            drinkMusic = os.path.join("music", "drink", "bp_drinkMusic_"+subject.winner+".wav")
+            winMusic = os.path.join("music", "winMusic.wav")
+            self.player.pause = False
+            initialized = True
+
+        
+        if(subject.currentStage != self.prevStage):
+            self.prevStage = subject.currentStage
+            if(subject.currentStage == "intro"):
+                self.player.play(introMusic)
+            elif(subject.currentStage == "game"):
+                self.player.play(gameMusic)
+            elif(subject.currentStage == "drink"):
+                self.player.play(drinkMusic)
+            elif(subject.currentStage == "win"):
+                self.player.play(winMusic)
+            else:
+                self.initialized = False
+                self.player.pause = True
+
+
+
+
+
+
+

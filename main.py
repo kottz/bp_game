@@ -1,15 +1,18 @@
-import vlc
+import mpv
 from game import Game
 from game import TextView
+from game import MusicView
 import os
 #player = vlc.MediaPlayer("/home/edward/Music/Allen Stone/Brown Eyed Lover/Allen Stone - Brown Eyed Lover.aac")
 
 testGame = Game('viktor', 'edward', 'anton', 'malva')
 textView = TextView()
+player = mpv.MPV()
+musicView = MusicView(player)
+testGame.attach(musicView)
 testGame.attach(textView)
 testGame.initGame()
 
-themePlayer = vlc.MediaPlayer(os.path.join("music","fullTheme.opus"))
 themePlaying = False
 
 def changeSettings():
@@ -28,7 +31,7 @@ while(True):
     print("1) Start Game")
     print("2) Edit Config")
     print("3) Play/Pause Theme")
-    print("4) Toggle heartBeat"+"("+str(testGame.heartBeat)+")")
+#    print("4) Toggle heartBeat"+"("+str(testGame.heartBeat)+")")
     print("5) print current setup")
     print("6) Quit")
     option = input("Enter your option: ")
@@ -51,6 +54,8 @@ while(True):
     elif(option == "5"):
         print(str(testGame.playerArray))
     else:
+        player.quit()
+        player = ''
         break
 
 
