@@ -4,7 +4,7 @@ import time
 PIN1 = 4
 PIN2 = 17
 PIN3 = 27
-PINPIN1 = 22
+PIN4 = 22
 
 def initGPIO():
     gpio.setmode(gpio.BCM)
