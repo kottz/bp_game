@@ -57,8 +57,6 @@ class Game:
             self.activeLight = i%4
             self.notify()
             time.sleep(0.4)
-        self.activeLight = None #Wants to clear lights here
-        self.notify()
         time.sleep(5.313)        
 
         ###Game
