@@ -2,13 +2,21 @@ import mpv
 from game import Game
 from game import TextView
 from game import MusicView
+from game import LightView
 import os
-#player = vlc.MediaPlayer("/home/edward/Music/Allen Stone/Brown Eyed Lover/Allen Stone - Brown Eyed Lover.aac")
+import relay
+
+def my_log(loglevel, component, message):
+    print('[{}] {}: {}'.format(loglevel, component, message))
 
 testGame = Game('viktor', 'edward', 'anton', 'malva')
 textView = TextView()
 player = mpv.MPV()
 musicView = MusicView(player)
+
+relay.initGPIO()
+lightView = LightView()
+testGame.attach(lightView)
 testGame.attach(musicView)
 testGame.attach(textView)
 testGame.initGame()
@@ -41,20 +49,19 @@ while(True):
     elif(option == "2"):
         changeSettings()
     elif(option == "3"):
-        if(themePlaying):
-            themePlayer.quit()
-            themePlaying = False
+        if(player.pause):
+            player.play(os.path.join("music","fullTheme.opus"))
+            player.pause = False
         else:
-            themePlayer.play(os.path.join("music","fullTheme.opus"))
-            #themePlayer.play()
-            themePlaying = True
+            player.pause = True
     elif(option == "4"):
         testGame.heartBeat = not testGame.heartBeat
         testGame.initGame()
     elif(option == "5"):
         print(str(testGame.playerArray))
     else:
-        player.quit()
+        relay.cleanup()
+        player.terminate()
         player = ''
         break
 

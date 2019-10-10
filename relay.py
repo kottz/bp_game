@@ -1,5 +1,4 @@
 import RPi.GPIO as gpio
-import time
 
 PIN1 = 4
 PIN2 = 17
@@ -13,8 +12,8 @@ def initGPIO():
     gpio.setup(PIN2, gpio.OUT)
     gpio.setup(PIN3, gpio.OUT)
     gpio.setup(PIN4, gpio.OUT)
-    print("hej blabla")
-
+    
+    turnAllOff()
 
 def turnOn(n):
     if(n==0):
