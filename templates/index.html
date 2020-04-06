@@ -1,0 +1,48 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/style.css') }}">
+</head>
+<body>
+	<h1>BP GAME</h1>
+
+        <form action="" onsubmit="startGame(event)">
+        <select name="p1" id="p1">
+            <option value="anton">Anton</option>
+            <option value="edward">Edward</option>
+            <option value="erik">Erik</option>
+            <option value="daniel">Daniel</option>
+        </select>
+        <select name="p2" id="p2">
+            <option value="anton">Anton</option>
+            <option value="edward" selected>Edward</option>
+            <option value="erik">Erik</option>
+            <option value="daniel">Daniel</option>
+        </select>
+        <select name="p3" id="p3">
+            <option value="anton">Anton</option>
+            <option value="edward">Edward</option>
+            <option value="erik" selected>Erik</option>
+            <option value="daniel">Daniel</option>
+        </select>
+        <select name="p4" id="p4">
+            <option value="anton">Anton</option>
+            <option value="edward">Edward</option>
+            <option value="erik">Erik</option>
+            <option value="daniel" selected>Daniel</option>
+        </select>
+        <button>Start Game</button>
+        </form>
+
+        <form action="" onsubmit="sendDrinkEvent(event)">
+            <button>Send Drink Event</button>
+        </form>
+	 
+	<h1 id="active"></h1>
+	<h1 id="players"></h1>
+	<h1 id="stage"></h1>
+	<h1 id="heart_beat"></h1>
+	<h1 id="running"></h1>
+	
+	<script src="{{ url_for('static', path='/main.js') }}" charset="UTF-8"></script>
+</body>
+</html> 
